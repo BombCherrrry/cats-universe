@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Cat's Universe — библиотека комиксов</title>
+<meta name="description" content="Cat's Universe — читай комиксы про крутых котов, ставь реакции, обсуждай с друзьями." />
+<meta name="theme-color" content="#121016" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Cat's <span>Universe</span></a>
+    <nav class="nav">
+      <a href="index.html" class="active">Библиотека</a>
+      <a href="chat.html">Болталка</a>
+    </nav>
+    <div class="who" id="whoBox"></div>
+  </div>
+</header>
+
+<div class="collage">
+  <img src="assets/hero-banner.jpg" alt="" />
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <svg class="claws" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M60 40 L180 480" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"/>
+      <path d="M140 20 L260 460" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"/>
+      <path d="M220 10 L330 440" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"/>
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ff4d2e"/>
+          <stop offset="1" stop-color="#d9a054" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="kicker">Библиотека комиксов</div>
+    <h1>Истории про крутых котов, которые растут прямо здесь</h1>
+    <p>Читай новые выпуски, ставь реакции и обсуждай каждую страницу с остальными — всё в одном месте.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="section-head">
+    <h2>Все выпуски</h2>
+    <span class="count" id="countLabel"></span>
+  </div>
+  <div class="shelf" id="shelf"></div>
+</div>
+
+<footer>
+  <div class="wrap">Cat's Universe · сделано для узкого круга своих</div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+  renderWho();
+
+  fetch("data/comics.json")
+    .then(r => r.json())
+    .then(({ comics }) => {
+      const shelf = document.getElementById("shelf");
+      const count = document.getElementById("countLabel");
+      count.textContent = comics.length + (comics.length === 1 ? " выпуск" : " выпусков");
+
+      if (!comics.length) {
+        shelf.innerHTML = `<div class="empty-shelf">Пока пусто. Первый выпуск появится здесь, как только его загрузят.</div>`;
+        return;
+      }
+
+      const sorted = [...comics].sort((a, b) => new Date(b.added) - new Date(a.added));
+      const isNew = (d) => (Date.now() - new Date(d).getTime()) < 1000 * 60 * 60 * 24 * 14;
+
+      shelf.innerHTML = sorted.map(c => `
+        <a class="card" href="comic.html?slug=${encodeURIComponent(c.slug)}">
+          <div class="cover"><img src="${c.cover}" alt="${escapeHtml(c.title)}" loading="lazy" /></div>
+          <div class="meta">
+            <h3>${escapeHtml(c.title)}</h3>
+            <div class="sub">${escapeHtml(c.subtitle || "")} · ${c.pageCount} стр.</div>
+            ${isNew(c.added) ? `<span class="badge-new">Новое</span>` : ""}
+          </div>
+        </a>`).join("") + `
+        <div class="card-ghost">
+          <div class="inner">
+            <span>Скоро</span>
+            <p>Следующий выпуск готовится</p>
+          </div>
+        </div>`;
+    });
+</script>
+</body>
+</html>
