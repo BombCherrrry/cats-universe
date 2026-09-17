@@ -4,8 +4,8 @@
 // Это НЕ секретные данные, их можно открыто хранить в коде сайта —
 // доступ к данным ограничивается правилами (RLS) на стороне Supabase.
 
-window.SUPABASE_URL = "ВСТАВЬ_СЮДА_URL_ПРОЕКТА";
-window.SUPABASE_ANON_KEY = "ВСТАВЬ_СЮДА_ANON_KEY";
+window.SUPABASE_URL = "https://dlaetkvtfwzdxjrkxeva.supabase.co";
+window.SUPABASE_ANON_KEY = "sb_publishable_JGK66gm-8M_nfhQujm_PkQ_DvVSoB9b";
 
 // Набор доступных реакций (эмодзи → подпись для title/alt)
 window.REACTIONS = ["♥️", "🤣", "🔥", "🤗", "🥵", "😡", "😭", "🤪", "🙈", "🤛🏻", "🤌🏻", "💪🏻"];
