@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Cat's Universe — читалка</title>
+<meta name="theme-color" content="#121016" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Cat's <span>Universe</span></a>
+    <nav class="nav">
+      <a href="index.html">Библиотека</a>
+      <a href="chat.html">Болталка</a>
+    </nav>
+    <div class="who" id="whoBox"></div>
+  </div>
+</header>
+
+<div class="reader-wrap" id="readerWrap">
+  <button class="reader-nav prev" id="prevBtn" aria-label="Назад">‹</button>
+  <img id="pageImg" alt="Страница комикса" />
+  <button class="reader-nav next" id="nextBtn" aria-label="Вперёд">›</button>
+  <div class="reader-count" id="pageCount"></div>
+</div>
+
+<div class="wrap">
+  <div class="comic-head">
+    <h1 id="comicTitle">Загрузка…</h1>
+    <div class="sub" id="comicSub"></div>
+  </div>
+
+  <div class="reactions" id="reactions"></div>
+
+  <div class="thread-title">Обсуждение</div>
+  <div class="thread-sub">Ветка для этого выпуска — делись впечатлениями, теориями, придирками.</div>
+  <div class="composer" id="composer"></div>
+  <div id="threadList"></div>
+</div>
+
+<footer><div class="wrap">Cat's Universe</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/reactions.js"></script>
+<script src="js/comments.js"></script>
+<script>
+  renderWho();
+
+  const params = new URLSearchParams(location.search);
+  const slug = params.get("slug");
+
+  let comic, page = 1;
+
+  const img = document.getElementById("pageImg");
+  const countEl = document.getElementById("pageCount");
+
+  function showPage(n) {
+    page = Math.min(Math.max(n, 1), comic.pageCount);
+    img.src = `${comic.pagesBase}${page}.${comic.pageExt}`;
+    countEl.textContent = `${page} / ${comic.pageCount}`;
+  }
+
+  document.getElementById("prevBtn").addEventListener("click", () => showPage(page - 1));
+  document.getElementById("nextBtn").addEventListener("click", () => showPage(page + 1));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") showPage(page - 1);
+    if (e.key === "ArrowRight") showPage(page + 1);
+  });
+
+  // свайп
+  let touchX = null;
+  const wrap = document.getElementById("readerWrap");
+  wrap.addEventListener("touchstart", (e) => { touchX = e.touches[0].clientX; });
+  wrap.addEventListener("touchend", (e) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) dx < 0 ? showPage(page + 1) : showPage(page - 1);
+    touchX = null;
+  });
+
+  fetch("data/comics.json")
+    .then(r => r.json())
+    .then(({ comics }) => {
+      comic = comics.find(c => c.slug === slug);
+      if (!comic) {
+        document.getElementById("comicTitle").textContent = "Комикс не найден";
+        document.getElementById("readerWrap").style.display = "none";
+        return;
+      }
+      document.title = comic.title + " — Cat's Universe";
+      document.getElementById("comicTitle").textContent = comic.title;
+      document.getElementById("comicSub").textContent = `${comic.subtitle || ""} · ${comic.pageCount} стр. · добавил(а) ${comic.author}`;
+      showPage(1);
+      initReactions(comic.slug);
+      initThread(comic.slug, { placeholder: "Что думаешь об этом выпуске?" });
+    });
+</script>
+</body>
+</html>
