@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Админка — Cat's Universe</title>
+<meta name="theme-color" content="#0a090d" />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .admin-wrap { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
+  .field { margin-bottom: 18px; }
+  .field label { display:block; font-size:0.88rem; color:var(--text-dim); margin-bottom:6px; }
+  .field input[type=text] {
+    width:100%; background:var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius-sm); color:var(--text); padding:11px 13px; font-size:0.95rem;
+  }
+  .field input:focus { border-color: var(--accent); outline:none; }
+  .hint { color:var(--text-faint); font-size:0.8rem; margin-top:5px; }
+
+  .tabs { display:flex; gap:8px; margin-bottom:26px; flex-wrap:wrap; }
+  .tabs button {
+    font-family:"Anton",sans-serif; text-transform:uppercase; letter-spacing:0.03em;
+    font-size:0.8rem; padding:9px 16px; border-radius:5px;
+    background:var(--surface); border:1.5px solid var(--border);
+    box-shadow:0 2px 0 var(--border); color:var(--text-dim);
+  }
+  .tabs button.on {
+    background:linear-gradient(100deg,var(--accent-gold),var(--accent));
+    color:var(--bg); border-color:var(--accent); box-shadow:0 2px 0 #8a3a1a;
+  }
+
+  .dropzone { border:1px dashed var(--border); border-radius: var(--radius); padding:26px; text-align:center; color:var(--text-dim); cursor:pointer; }
+  .dropzone:hover { border-color: var(--accent); }
+  .pagelist { display:flex; flex-direction:column; gap:8px; margin-top:16px; }
+  .pagerow { display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 10px; }
+  .pagerow img { width:40px; height:40px; object-fit:cover; border-radius:4px; flex-shrink:0; }
+  .pagerow .fname { flex:1; font-size:0.85rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pagerow button { background:none; border:none; color:var(--text-faint); font-size:1.05rem; padding:2px 6px; }
+  .pagerow button:hover { color:var(--accent); }
+
+  .primary-btn {
+    background:linear-gradient(100deg,var(--accent-gold),var(--accent)); color:#1a1207; border:none;
+    border-radius: var(--radius-sm); padding:13px 22px; font-weight:700; font-size:0.95rem; width:100%; margin-top:20px;
+    transition: transform 0.1s;
+  }
+  .primary-btn:active { transform: scale(0.98); }
+  .primary-btn:disabled { opacity:0.5; }
+
+  .status-log { margin-top:18px; font-size:0.85rem; color:var(--text-dim); display:flex; flex-direction:column; gap:4px; }
+  .status-log .ok { color: var(--accent-gold); }
+  .status-log .err { color: var(--danger); }
+
+  .token-gate { max-width: 440px; margin: 50px auto; text-align:center; padding: 0 20px; }
+  .token-gate p { color:var(--text-dim); font-size:0.9rem; margin-bottom:16px; }
+  .logout-link { display:block; text-align:center; margin-top:30px; color:var(--text-faint); font-size:0.82rem; }
+
+  .item {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:14px; margin-bottom:12px;
+  }
+  .item .row { display:flex; gap:12px; align-items:center; }
+  .item .row img { width:48px; height:64px; object-fit:cover; border-radius:4px; flex-shrink:0; background:var(--surface-2); }
+  .item .info { flex:1; min-width:0; }
+  .item .info strong { display:block; font-size:0.95rem; }
+  .item .info span { color:var(--text-faint); font-size:0.8rem; }
+  .item .acts { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+  .mini {
+    background:var(--surface-2); border:1px solid var(--border); color:var(--text-dim);
+    border-radius:6px; padding:6px 11px; font-size:0.8rem;
+  }
+  .mini:hover { border-color:var(--accent); color:var(--text); }
+  .mini.danger:hover { border-color:var(--danger); color:var(--danger); }
+
+  .pagegrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); gap:8px; margin-top:14px; }
+  .pagecell { position:relative; }
+  .pagecell img { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:4px; border:1px solid var(--border); background:var(--surface-2); }
+  .pagecell .num { position:absolute; top:3px; left:3px; background:rgba(0,0,0,0.65); font-size:0.68rem; padding:1px 5px; border-radius:3px; }
+  .pagecell .del {
+    position:absolute; top:3px; right:3px; background:rgba(0,0,0,0.65); border:none;
+    color:#fff; font-size:0.75rem; width:20px; height:20px; border-radius:3px; line-height:1;
+  }
+  .pagecell .del:hover { background:var(--danger); }
+
+  .mod-msg { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:10px; }
+  .mod-msg .top { display:flex; justify-content:space-between; gap:10px; align-items:baseline; }
+  .mod-msg .who { font-weight:600; font-size:0.9rem; }
+  .mod-msg .when { color:var(--text-faint); font-size:0.76rem; }
+  .mod-msg .body { margin-top:5px; white-space:pre-wrap; word-break:break-word; font-size:0.92rem; }
+  .mod-msg .where { color:var(--text-faint); font-size:0.75rem; margin-top:6px; }
+  .mod-msg .del-btn { background:none; border:none; color:var(--text-faint); font-size:0.8rem; padding:0; margin-top:8px; }
+  .mod-msg .del-btn:hover { color:var(--danger); }
+
+  .filter-bar { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .filter-bar select {
+    background:var(--surface); border:1px solid var(--border); color:var(--text);
+    border-radius:var(--radius-sm); padding:9px 12px; font-family:inherit; font-size:0.88rem;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Cat's <span>Universe</span></a>
+    <nav class="nav">
+      <a href="index.html">Библиотека</a>
+      <a href="chat.html">Болталка</a>
+    </nav>
+    <div class="who" id="whoBox"></div>
+  </div>
+</header>
+
+<div id="gateView" class="token-gate" style="display:none;">
+  <h1 class="display" style="font-size:1.6rem; margin-bottom:14px;">Вход в админку</h1>
+  <p>Нужен личный токен GitHub с доступом к этому репозиторию — он хранится только в этом браузере.</p>
+  <div class="field" style="text-align:left;">
+    <label for="tokenInput">GitHub токен</label>
+    <input type="text" id="tokenInput" placeholder="github_pat_..." autocomplete="off" />
+    <div class="hint">
+      GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens →
+      Generate new token. Repository access — только <span id="repoNameHint"></span>.
+      Permissions → Contents → Read and write.
+    </div>
+  </div>
+  <button class="primary-btn" id="saveTokenBtn">Войти</button>
+</div>
+
+<div id="panelView" class="admin-wrap" style="display:none;">
+  <div class="tabs">
+    <button data-tab="upload" class="on">Загрузить</button>
+    <button data-tab="manage">Комиксы</button>
+    <button data-tab="mod">Модерация</button>
+  </div>
+
+  <section id="tab-upload">
+    <h1 class="display" style="font-size:1.4rem; margin-bottom:6px;">Новый выпуск</h1>
+    <p class="hint" style="margin-bottom:22px;">Файлы уходят прямо в репозиторий — сайт обновится через 1-2 минуты.</p>
+
+    <div class="field">
+      <label for="titleInput">Название выпуска</label>
+      <input type="text" id="titleInput" placeholder="Например, Крутые коты 2" />
+    </div>
+    <div class="field">
+      <label for="subInput">Подзаголовок (необязательно)</label>
+      <input type="text" id="subInput" placeholder="Deluxe" />
+    </div>
+    <div class="field">
+      <label>Страницы (в нужном порядке)</label>
+      <div class="dropzone" id="dropzone">Нажми, чтобы выбрать файлы страниц</div>
+      <input type="file" id="pagesInput" accept="image/*" multiple style="display:none;" />
+      <div class="pagelist" id="pagelist"></div>
+      <div class="hint">Порядок — как выбрала. Переставить можно стрелками.</div>
+    </div>
+
+    <button class="primary-btn" id="uploadBtn">Опубликовать выпуск</button>
+    <div class="status-log" id="statusLog"></div>
+  </section>
+
+  <section id="tab-manage" style="display:none;">
+    <h1 class="display" style="font-size:1.4rem; margin-bottom:6px;">Комиксы</h1>
+    <p class="hint" style="margin-bottom:22px;">Переименовать, дозагрузить или убрать страницы, удалить выпуск.</p>
+    <div id="comicList"></div>
+    <div class="status-log" id="manageLog"></div>
+  </section>
+
+  <section id="tab-mod" style="display:none;">
+    <h1 class="display" style="font-size:1.4rem; margin-bottom:6px;">Модерация</h1>
+    <p class="hint" style="margin-bottom:22px;">Удаление сообщений из болталки и комментариев под выпусками.</p>
+    <div class="filter-bar">
+      <select id="modFilter"><option value="">Все обсуждения</option></select>
+      <button class="mini" id="modRefresh">Обновить</button>
+    </div>
+    <div id="modList"></div>
+    <div class="status-log" id="modLog"></div>
+  </section>
+
+  <a href="#" class="logout-link" id="logoutLink">Выйти / сменить токен</a>
+</div>
+
+<input type="file" id="addPagesInput" accept="image/*" multiple style="display:none;" />
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
