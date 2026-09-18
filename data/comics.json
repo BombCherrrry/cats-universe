@@ -1,4 +1,44 @@
 {
   "comics": [
+    {
+      "slug": "krutye-koty",
+      "title": "Крутые коты",
+      "subtitle": "",
+      "author": "никита",
+      "added": "2026-09-18",
+      "cover": "comics/krutye-koty/1.webp",
+      "pageCount": 29,
+      "pages": [
+        "comics/krutye-koty/1.webp",
+        "comics/krutye-koty/2.webp",
+        "comics/krutye-koty/3.webp",
+        "comics/krutye-koty/4.webp",
+        "comics/krutye-koty/5.webp",
+        "comics/krutye-koty/6.webp",
+        "comics/krutye-koty/7.webp",
+        "comics/krutye-koty/8.webp",
+        "comics/krutye-koty/9.webp",
+        "comics/krutye-koty/10.webp",
+        "comics/krutye-koty/11.webp",
+        "comics/krutye-koty/12.webp",
+        "comics/krutye-koty/13.webp",
+        "comics/krutye-koty/14.webp",
+        "comics/krutye-koty/15.webp",
+        "comics/krutye-koty/16.webp",
+        "comics/krutye-koty/17.webp",
+        "comics/krutye-koty/18.webp",
+        "comics/krutye-koty/19.webp",
+        "comics/krutye-koty/20.webp",
+        "comics/krutye-koty/21.webp",
+        "comics/krutye-koty/22.webp",
+        "comics/krutye-koty/23.webp",
+        "comics/krutye-koty/24.webp",
+        "comics/krutye-koty/25.webp",
+        "comics/krutye-koty/26.webp",
+        "comics/krutye-koty/27.webp",
+        "comics/krutye-koty/28.webp",
+        "comics/krutye-koty/29.webp"
+      ]
+    }
   ]
 }
