@@ -1,16 +1,4 @@
 {
   "comics": [
-    {
-      "slug": "krutye-koty",
-      "title": "Крутые коты",
-      "subtitle": "Deluxe",
-      "author": "Никита",
-      "added": "2026-09-01",
-      "cover": "https://cats-universe.victory1998772.chatgpt.site/pages/mobile/1.webp",
-      "pageCount": 29,
-      "pagesBase": "https://cats-universe.victory1998772.chatgpt.site/pages/mobile/",
-      "pagesFullBase": "https://cats-universe.victory1998772.chatgpt.site/pages/",
-      "pageExt": "webp"
-    }
   ]
 }
